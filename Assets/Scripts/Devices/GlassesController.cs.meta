@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 0937974e43364d14b86a24c964b563df
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - glassesObject: {fileID: 3283888604178059359, guid: 94def78fbf52acd4eb096af123642269, type: 3}
+  - scannerPrefab: {fileID: 6148906127319020333, guid: 03b7a4883d93de2459095944bf5bf3d7, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
