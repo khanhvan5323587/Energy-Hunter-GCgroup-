@@ -10,7 +10,7 @@ public class SwitchController : MonoBehaviour
     [Header("References")]
     public GameObject linkedDevice;  
 
-    private bool isTurnedOff = false;
+    public bool isTurnedOff = false;
     private Camera playerCamera;
 
     void Start()
@@ -50,17 +50,11 @@ public class SwitchController : MonoBehaviour
         }
     }
 
-    if (isWastingDevice)
-    {
-        HUDManager.Instance.UpdateScore(20);
-        HUDManager.Instance.ShowFeedback("+" + "20pts - " + deviceName + " turned off! ");
-        HUDManager.Instance.UpdateEnergyMeter(
-            HUDManager.Instance.energyMeter.value - 33.3f);
-    }
-    else
-    {
-        HUDManager.Instance.UpdateScore(-10);
-        HUDManager.Instance.ShowFeedback("-10pts - " + deviceName + " should stay ON! ");
-    }
+    if (HUDManager.Instance == null) return;
+
+    // devices +20 điểm
+    HUDManager.Instance.UpdateScore(25);
+    HUDManager.Instance.ShowFeedback("+20pts - " + deviceName + " turned off!");
+    HUDManager.Instance.DecreaseEnergy();
 }
 }

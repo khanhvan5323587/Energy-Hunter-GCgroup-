@@ -40,23 +40,20 @@ public class HUDManager : MonoBehaviour
         winPanel.SetActive(false);
         losePanel.SetActive(false);
         UpdateScore(0);
-        UpdateEnergyMeter(100f);
+        UpdateEnergyMeter(80f);
     }
 
     void Update()
     {
         if (!gameActive) return;
 
-        // Countdown timer
         timeRemaining -= Time.deltaTime;
         timeRemaining = Mathf.Max(0f, timeRemaining);
         UpdateTimer();
 
-        // out of time → lose
         if (timeRemaining <= 0f)
             ShowLose();
 
-        // Feedback popup auto hide after 2s
         if (feedbackTimer > 0f)
         {
             feedbackTimer -= Time.deltaTime;
@@ -70,7 +67,7 @@ public class HUDManager : MonoBehaviour
         int seconds = Mathf.CeilToInt(timeRemaining);
         timerText.text = seconds + "s";
 
-        if (timeRemaining <= 30f)
+        if (timeRemaining <= 15f)
             timerText.color = Color.red;
         else
             timerText.color = Color.white;
@@ -81,7 +78,6 @@ public class HUDManager : MonoBehaviour
         score += points;
         scoreText.text = "Score: " + score;
 
-        // 80 score → win!
         if (score >= 80)
             ShowWin();
     }
@@ -89,6 +85,13 @@ public class HUDManager : MonoBehaviour
     public void UpdateEnergyMeter(float value)
     {
         energyMeter.value = value;
+    }
+
+    // Decrease energy meter
+    public void DecreaseEnergy()
+    {
+        energyMeter.value -= 20f;
+        energyMeter.value = Mathf.Max(0f, energyMeter.value);
     }
 
     public void UpdateGlassesState(bool isOn)
@@ -122,22 +125,25 @@ public class HUDManager : MonoBehaviour
         Cursor.visible = true;
     }
 
-    public void PlayAgain()
-    {
-        UnityEngine.SceneManagement.SceneManager
-            .LoadScene(UnityEngine.SceneManagement
-            .SceneManager.GetActiveScene().name);
-    }
-    public void BackToMenu()
+
+public void BackToMenu()
 {
-    Time.timeScale = 0f;
+    Time.timeScale = 1f;
+    UnityEngine.SceneManagement.SceneManager
+        .LoadScene(UnityEngine.SceneManagement
+        .SceneManager.GetActiveScene().name);
+}
+    public void ResetGame()
+{
+    score = 0;
+    timeRemaining = 60f;
+    gameActive = true;
+    scoreText.text = "Score: 0";
+    energyMeter.value = 80f;
+    glassesStateText.text = "AR Glasses: OFF";
+    glassesStateText.color = Color.white;
     winPanel.SetActive(false);
     losePanel.SetActive(false);
-    
-    // go back to memu penal
-    FindObjectOfType<MainMenuPanel>().menuPanel.SetActive(true);
-    
-    Cursor.lockState = CursorLockMode.None;
-    Cursor.visible = true;
+    feedbackText.gameObject.SetActive(false);
 }
 }

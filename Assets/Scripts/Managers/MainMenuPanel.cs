@@ -10,7 +10,8 @@ public class MainMenuPanel : MonoBehaviour
     void Start()
     {
         menuPanel.SetActive(true);
-        howToPlayPanel.SetActive(false);
+        if (howToPlayPanel != null)
+            howToPlayPanel.SetActive(false);
         if (crosshair != null)
             crosshair.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
@@ -24,26 +25,38 @@ public class MainMenuPanel : MonoBehaviour
     public void StartGame()
     {
         menuPanel.SetActive(false);
-        howToPlayPanel.SetActive(false);
+        if (howToPlayPanel != null)
+            howToPlayPanel.SetActive(false);
         if (crosshair != null)
             crosshair.SetActive(true);
+
+        // Reset cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // Resume game
         Time.timeScale = 1f;
 
+        // Enable FPS
         if (fpsController != null)
             fpsController.enabled = true;
+
+        // Reset HUD
+        if (HUDManager.Instance != null)
+            HUDManager.Instance.ResetGame();
     }
 
     public void ShowHowToPlay()
     {
         menuPanel.SetActive(false);
-        howToPlayPanel.SetActive(true);
+        if (howToPlayPanel != null)
+            howToPlayPanel.SetActive(true);
     }
 
     public void BackToMenu()
     {
-        howToPlayPanel.SetActive(false);
+        if (howToPlayPanel != null)
+            howToPlayPanel.SetActive(false);
         menuPanel.SetActive(true);
     }
 

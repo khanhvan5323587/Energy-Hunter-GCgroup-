@@ -9,7 +9,7 @@ public class GlassesController : MonoBehaviour
     [Header("References")]
     public GameObject glassesObject;
     public GameObject[] energyWasteDevices;
-    public GameObject scannerPrefab;  
+    public GameObject scannerPrefab;
 
     private bool glassesPickedUp = false;
     private Camera playerCamera;
@@ -28,7 +28,7 @@ public class GlassesController : MonoBehaviour
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.G))
+            if (Input.GetKeyDown(KeyCode.Q))
                 ToggleGlasses();
         }
     }
@@ -60,41 +60,64 @@ public class GlassesController : MonoBehaviour
         }
     }
 
-  void ToggleGlasses()
-{
-    glassesOn = !glassesOn;
-
-    foreach (GameObject device in energyWasteDevices)
+    void ToggleGlasses()
     {
-        Renderer rend = device.GetComponent<Renderer>();
-        if (rend != null)
+        glassesOn = !glassesOn;
+
+        foreach (GameObject device in energyWasteDevices)
         {
-            if (glassesOn)
+            Renderer rend = device.GetComponent<Renderer>();
+            if (rend != null)
             {
-                rend.material.EnableKeyword("_EMISSION");
-                rend.material.SetColor("_EmissionColor", Color.red * 2f);
-            }
-            else
-            {
-                rend.material.DisableKeyword("_EMISSION");
-                rend.material.SetColor("_EmissionColor", Color.black);
+                SwitchController sw = FindSwitchForDevice(device);
+                bool alreadyOff = sw != null && sw.isTurnedOff;
+
+                if (glassesOn)
+                {
+                    if (alreadyOff)
+                    {
+                        rend.material.EnableKeyword("_EMISSION");
+                        rend.material.SetColor("_EmissionColor", Color.green * 2f);
+                    }
+                    else
+                    {
+                        rend.material.EnableKeyword("_EMISSION");
+                        rend.material.SetColor("_EmissionColor", Color.red * 2f);
+                    }
+                }
+                else
+                {
+                    rend.material.DisableKeyword("_EMISSION");
+                    rend.material.SetColor("_EmissionColor", Color.black);
+                }
             }
         }
+
+        if (glassesOn && scannerPrefab != null)
+        {
+            Vector3 spawnPos = new Vector3(
+                this.transform.position.x,
+                0f,
+                this.transform.position.z
+            );
+            Instantiate(scannerPrefab, spawnPos, Quaternion.identity);
+        }
+
+        HUDManager.Instance.UpdateGlassesState(glassesOn);
+        Debug.Log("Glasses: " + (glassesOn ? "ON" : "OFF"));
     }
 
-    // Spawn scan effect
-    if (glassesOn && scannerPrefab != null)
+    // Find switch linked to device
+    SwitchController FindSwitchForDevice(GameObject device)
     {
-        Vector3 spawnPos = new Vector3(
-            this.transform.position.x,
-            0f,
-            this.transform.position.z
-        );
-        Instantiate(scannerPrefab, spawnPos, Quaternion.identity);
+        SwitchController[] allSwitches =
+            FindObjectsOfType<SwitchController>();
+
+        foreach (SwitchController sw in allSwitches)
+        {
+            if (sw.linkedDevice == device)
+                return sw;
+        }
+        return null;
     }
-
-    HUDManager.Instance.UpdateGlassesState(glassesOn);
-
-    Debug.Log("Glasses: " + (glassesOn ? "ON" : "OFF"));
-}
 }
