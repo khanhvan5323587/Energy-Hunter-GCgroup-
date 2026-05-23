@@ -13,6 +13,10 @@ public class SwitchController : MonoBehaviour
     public bool isTurnedOff = false;
     private Camera playerCamera;
 
+    [Header("Education")]
+    public string educationTitle;
+    public string educationFact;
+
     void Start()
     {
         playerCamera = Camera.main;
@@ -52,9 +56,11 @@ public class SwitchController : MonoBehaviour
 
     if (HUDManager.Instance == null) return;
 
-    // devices +20 điểm
+  
     HUDManager.Instance.UpdateScore(25);
-    HUDManager.Instance.ShowFeedback("+20pts - " + deviceName + " turned off!");
+    HUDManager.Instance.ShowFeedback("+25pts - device turned off!");
     HUDManager.Instance.DecreaseEnergy();
+    HUDManager.Instance.ShowEducation(educationTitle, educationFact);
+
 }
 }

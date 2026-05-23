@@ -24,6 +24,12 @@ public class HUDManager : MonoBehaviour
     public TextMeshProUGUI winScoreText;
     public TextMeshProUGUI loseScoreText;
 
+    [Header("Education Panel")]
+    public GameObject educationPanel;
+    public TextMeshProUGUI educationTitle;
+    public TextMeshProUGUI educationFact;
+
+    private bool educationPanelOpen = false;
     private int score = 0;
     private float timeRemaining = 60f;
     private bool gameActive = false;
@@ -39,12 +45,21 @@ public class HUDManager : MonoBehaviour
         gameActive = true;
         winPanel.SetActive(false);
         losePanel.SetActive(false);
+        educationPanel.SetActive(false);
         UpdateScore(0);
-        UpdateEnergyMeter(80f);
+        UpdateEnergyMeter(100f);
     }
 
     void Update()
     {
+        // Close education panel on left click
+        if (educationPanelOpen &&
+            Input.GetMouseButtonDown(0))
+        {
+            CloseEducation();
+            return;
+        }
+
         if (!gameActive) return;
 
         timeRemaining -= Time.deltaTime;
@@ -78,7 +93,7 @@ public class HUDManager : MonoBehaviour
         score += points;
         scoreText.text = "Score: " + score;
 
-        if (score >= 80)
+        if (score >= 100)
             ShowWin();
     }
 
@@ -87,10 +102,9 @@ public class HUDManager : MonoBehaviour
         energyMeter.value = value;
     }
 
-    // Decrease energy meter
     public void DecreaseEnergy()
     {
-        energyMeter.value -= 20f;
+        energyMeter.value -= 25f;
         energyMeter.value = Mathf.Max(0f, energyMeter.value);
     }
 
@@ -107,43 +121,95 @@ public class HUDManager : MonoBehaviour
         feedbackTimer = 2f;
     }
 
+    public void ShowEducation(string title, string fact)
+    {
+        educationPanel.SetActive(true);
+        educationTitle.text = title;
+        educationFact.text = fact;
+        educationPanelOpen = true;
+
+        // Pause + unlock cursor
+        Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    void CloseEducation()
+    {
+        educationPanel.SetActive(false);
+        educationPanelOpen = false;
+
+        // Only lock cursor if game still active
+        if (gameActive)
+        {
+            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            // Game ended, keep cursor visible
+            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
     void ShowWin()
     {
         gameActive = false;
+        educationPanelOpen = false;
+        educationPanel.SetActive(false);
         winPanel.SetActive(true);
         winScoreText.text = "Final Score: " + score;
+
+        // Keep timeScale = 1 so buttons work
+        Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        FPS_Controller fps = FindObjectOfType<FPS_Controller>();
+        if (fps != null) fps.enabled = false;
     }
 
     void ShowLose()
     {
         gameActive = false;
+        educationPanelOpen = false;
+        educationPanel.SetActive(false);
         losePanel.SetActive(true);
         loseScoreText.text = "Final Score: " + score;
+
+        Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        FPS_Controller fps = FindObjectOfType<FPS_Controller>();
+        if (fps != null) fps.enabled = false;
     }
 
+    public void BackToMenu()
+    {
+        Time.timeScale = 1f;
+        educationPanelOpen = false;
+        UnityEngine.SceneManagement.SceneManager
+            .LoadScene(UnityEngine.SceneManagement
+            .SceneManager.GetActiveScene().name);
+    }
 
-public void BackToMenu()
-{
-    Time.timeScale = 1f;
-    UnityEngine.SceneManagement.SceneManager
-        .LoadScene(UnityEngine.SceneManagement
-        .SceneManager.GetActiveScene().name);
-}
     public void ResetGame()
-{
-    score = 0;
-    timeRemaining = 60f;
-    gameActive = true;
-    scoreText.text = "Score: 0";
-    energyMeter.value = 80f;
-    glassesStateText.text = "AR Glasses: OFF";
-    glassesStateText.color = Color.white;
-    winPanel.SetActive(false);
-    losePanel.SetActive(false);
-    feedbackText.gameObject.SetActive(false);
-}
+    {
+        score = 0;
+        timeRemaining = 60f;
+        gameActive = true;
+        educationPanelOpen = false;
+        scoreText.text = "Score: 0";
+        energyMeter.value = 100f;
+        glassesStateText.text = "AR Glasses: OFF";
+        glassesStateText.color = Color.white;
+        winPanel.SetActive(false);
+        losePanel.SetActive(false);
+        educationPanel.SetActive(false);
+        feedbackText.gameObject.SetActive(false);
+    }
 }
