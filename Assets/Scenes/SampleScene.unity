@@ -5250,13 +5250,13 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 521889363}
-  - {fileID: 1928027332}
   - {fileID: 1458653860}
   - {fileID: 76390392}
   - {fileID: 1947961349}
   - {fileID: 380053950}
   - {fileID: 1927926599}
   - {fileID: 362232964}
+  - {fileID: 1928027332}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5954,7 +5954,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "MOVEMENT\nWASD - Move around\n\nAR GLASSES  \nE - Pick up glasses | G
+  m_text: "MOVEMENT\nWASD - Move around\n\nAR GLASSES  \nE - Pick up glasses | Q
     - Toggle glasses ON/OFF\n\nDEVICES\nFind glowing red devices\nF - Interact with
     switch to turn off\n\nGOAL\nTurn off all wasting devices before time runs out!"
   m_isRightToLeft: 0
